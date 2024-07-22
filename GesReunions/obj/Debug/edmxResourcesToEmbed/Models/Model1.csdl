@@ -1,0 +1,151 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="GestionReunionsModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="reunion_utilisateur">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="ReunionTitre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="utilisateurId" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Reunions" Relationship="Self.FK_reunion_utilisateur_Reunions" FromRole="reunion_utilisateur" ToRole="Reunions" />
+    <NavigationProperty Name="Utilisateurs" Relationship="Self.FK_reunion_utilisateur_Utilisateurs" FromRole="reunion_utilisateur" ToRole="Utilisateurs" />
+  </EntityType>
+  <EntityType Name="Reunions">
+    <Key>
+      <PropertyRef Name="Titre" />
+    </Key>
+    <Property Name="Titre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Description" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Date" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="Heures" Type="Int32" Nullable="false" />
+    <Property Name="Lieu" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="reunion_utilisateur" Relationship="Self.FK_reunion_utilisateur_Reunions" FromRole="Reunions" ToRole="reunion_utilisateur" />
+    <NavigationProperty Name="Salles" Relationship="Self.FK_Reunions_Reunions" FromRole="Reunions" ToRole="Salles" />
+  </EntityType>
+  <EntityType Name="Role">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" />
+    <Property Name="nom" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="Utilisateurs" Relationship="Self.FK_Utilisateurs_Role" FromRole="Role" ToRole="Utilisateurs" />
+  </EntityType>
+  <EntityType Name="Salles">
+    <Key>
+      <PropertyRef Name="nom" />
+    </Key>
+    <Property Name="nom" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="capacite" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Reunions" Relationship="Self.FK_Reunions_Reunions" FromRole="Salles" ToRole="Reunions" />
+  </EntityType>
+  <EntityType Name="sysdiagrams">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="principal_id" Type="Int32" Nullable="false" />
+    <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="version" Type="Int32" />
+    <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="Utilisateurs">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Nom" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Prenom" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Matricule" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="CompteWindows" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Responsabe" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Role" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="reunion_utilisateur" Relationship="Self.FK_reunion_utilisateur_Utilisateurs" FromRole="Utilisateurs" ToRole="reunion_utilisateur" />
+    <NavigationProperty Name="Role1" Relationship="Self.FK_Utilisateurs_Role" FromRole="Utilisateurs" ToRole="Role" />
+  </EntityType>
+  <Association Name="FK_reunion_utilisateur_Reunions">
+    <End Role="Reunions" Type="Self.Reunions" Multiplicity="1" />
+    <End Role="reunion_utilisateur" Type="Self.reunion_utilisateur" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Reunions">
+        <PropertyRef Name="Titre" />
+      </Principal>
+      <Dependent Role="reunion_utilisateur">
+        <PropertyRef Name="ReunionTitre" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_reunion_utilisateur_Utilisateurs">
+    <End Role="Utilisateurs" Type="Self.Utilisateurs" Multiplicity="1" />
+    <End Role="reunion_utilisateur" Type="Self.reunion_utilisateur" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Utilisateurs">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="reunion_utilisateur">
+        <PropertyRef Name="utilisateurId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Reunions_Reunions">
+    <End Role="Salles" Type="Self.Salles" Multiplicity="1" />
+    <End Role="Reunions" Type="Self.Reunions" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Salles">
+        <PropertyRef Name="nom" />
+      </Principal>
+      <Dependent Role="Reunions">
+        <PropertyRef Name="Lieu" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Utilisateurs_Role">
+    <End Role="Role" Type="Self.Role" Multiplicity="1" />
+    <End Role="Utilisateurs" Type="Self.Utilisateurs" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Role">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Utilisateurs">
+        <PropertyRef Name="Role" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="GestionReunionsEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="reunion_utilisateur" EntityType="Self.reunion_utilisateur" />
+    <EntitySet Name="Reunions" EntityType="Self.Reunions" />
+    <EntitySet Name="Role" EntityType="Self.Role" />
+    <EntitySet Name="Salles" EntityType="Self.Salles" />
+    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" />
+    <EntitySet Name="Utilisateurs" EntityType="Self.Utilisateurs" />
+    <AssociationSet Name="FK_reunion_utilisateur_Reunions" Association="Self.FK_reunion_utilisateur_Reunions">
+      <End Role="Reunions" EntitySet="Reunions" />
+      <End Role="reunion_utilisateur" EntitySet="reunion_utilisateur" />
+    </AssociationSet>
+    <AssociationSet Name="FK_reunion_utilisateur_Utilisateurs" Association="Self.FK_reunion_utilisateur_Utilisateurs">
+      <End Role="Utilisateurs" EntitySet="Utilisateurs" />
+      <End Role="reunion_utilisateur" EntitySet="reunion_utilisateur" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Reunions_Reunions" Association="Self.FK_Reunions_Reunions">
+      <End Role="Salles" EntitySet="Salles" />
+      <End Role="Reunions" EntitySet="Reunions" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Utilisateurs_Role" Association="Self.FK_Utilisateurs_Role">
+      <End Role="Role" EntitySet="Role" />
+      <End Role="Utilisateurs" EntitySet="Utilisateurs" />
+    </AssociationSet>
+    <EntitySet Name="Events" EntityType="GestionReunionsModel.Events" />
+  </EntityContainer>
+  <EntityType Name="Events">
+    <Key>
+      <PropertyRef Name="EventID" />
+    </Key>
+    <Property Name="EventID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Subject" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+    <Property Name="Description" Type="String" MaxLength="300" FixedLength="false" Unicode="true" />
+    <Property Name="Start" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="Endd" Type="DateTime" Precision="3" />
+    <Property Name="ThemeColor" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+    <Property Name="IsFullDay" Type="Boolean" Nullable="false" />
+  </EntityType>
+</Schema>

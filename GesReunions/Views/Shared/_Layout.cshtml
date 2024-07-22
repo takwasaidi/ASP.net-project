@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Mon application ASP.NET</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <style>
+        /* Styles pour la sidebar */
+        .sidebar {
+            position: fixed;
+            top: 51px; /* Ajuste pour ne pas chevaucher la navbar */
+            left: 0;
+            height: calc(100% - 51px); /* Ajuste pour ne pas chevaucher la navbar */
+            width: 250px;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-right: 1px solid #ddd;
+            z-index: 1000;
+        }
+
+            .sidebar h4 {
+                margin-top: 0;
+            }
+
+            .sidebar a {
+                display: block;
+                padding: 10px;
+                color: #333;
+                text-decoration: none;
+                border-radius: 4px;
+            }
+
+                .sidebar a:hover {
+                    background-color: #ddd;
+                }
+
+        .content {
+            margin-left: 250px; /* Ajuste la marge pour laisser place à la sidebar */
+            padding: 15px;
+        }
+
+        .navbar {
+            z-index: 1020; /* Assure que la navbar est au-dessus de la sidebar */
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="@Url.Action("Index", "Home")">
+                    <img src="~/Images/logo.png" alt="Logo" style="max-height: 100%; display: inline-block;">
+                </a>
+                @Html.ActionLink("TISCIRUIT", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("Accueil", "Index", "Home")</li>
+                    <li>@Html.ActionLink("À propos de", "About", "Home")</li>
+                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                    <li>@Html.ActionLink("Reunions", "Index", "Reunions")</li>
+                    
+                </ul>
+                <p class="nav navbar-text navbar-right">Bonjour, @User.Identity.Name!</p>
+            </div>
+        </div>
+    </div>
+
+    <!--<div class="sidebar">
+        <h4>Menu</h4>
+        <a href="@Url.Action("Index", "Reunions")">Réunions</a>
+        <a href="@Url.Action("Index", "Utilisateurs")">Utilisateurs</a>
+        <a href="@Url.Action("Index", "Salles")">Salles</a>-->
+        <!-- Ajoutez d'autres liens si nécessaire -->
+    <!--</div>-->
+
+    <div class="content">
+        <div class="container body-content">
+            @RenderBody()
+            <hr />
+            <footer>
+                <p>&copy; @DateTime.Now.Year - Mon application ASP.NET</p>
+            </footer>
+        </div>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

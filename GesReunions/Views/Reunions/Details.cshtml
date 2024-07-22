@@ -1,0 +1,50 @@
+﻿@model GesReunions.Models.Reunions
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Reunions</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Date)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Heures)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Heures)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Salles.nom)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Salles.nom)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Titre }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

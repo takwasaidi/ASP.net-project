@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="GestionReunionsModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="Events">
+    <Key>
+      <PropertyRef Name="EventID" />
+    </Key>
+    <Property Name="EventID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Subject" Type="nvarchar" MaxLength="200" Nullable="false" />
+    <Property Name="Description" Type="nvarchar" MaxLength="300" />
+    <Property Name="Start" Type="datetime" Nullable="false" />
+    <Property Name="Endd" Type="datetime" />
+    <Property Name="ThemeColor" Type="nvarchar" MaxLength="10" />
+    <Property Name="IsFullDay" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="reunion_utilisateur">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="ReunionTitre" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="utilisateurId" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Reunions">
+    <Key>
+      <PropertyRef Name="Titre" />
+    </Key>
+    <Property Name="Titre" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="Description" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="Date" Type="datetime" Nullable="false" />
+    <Property Name="Heures" Type="int" Nullable="false" />
+    <Property Name="Lieu" Type="varchar" MaxLength="50" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Role">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" Nullable="false" />
+    <Property Name="nom" Type="varchar" MaxLength="50" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Salles">
+    <Key>
+      <PropertyRef Name="nom" />
+    </Key>
+    <Property Name="nom" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="capacite" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="sysdiagrams">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+    <Property Name="principal_id" Type="int" Nullable="false" />
+    <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="version" Type="int" />
+    <Property Name="definition" Type="varbinary(max)" />
+  </EntityType>
+  <EntityType Name="Utilisateurs">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Nom" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="Prenom" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="Matricule" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="CompteWindows" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="Email" Type="varchar" MaxLength="50" />
+    <Property Name="Responsabe" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="Role" Type="int" Nullable="false" />
+  </EntityType>
+  <Association Name="FK_reunion_utilisateur_Reunions">
+    <End Role="Reunions" Type="Self.Reunions" Multiplicity="1" />
+    <End Role="reunion_utilisateur" Type="Self.reunion_utilisateur" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Reunions">
+        <PropertyRef Name="Titre" />
+      </Principal>
+      <Dependent Role="reunion_utilisateur">
+        <PropertyRef Name="ReunionTitre" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_reunion_utilisateur_Utilisateurs">
+    <End Role="Utilisateurs" Type="Self.Utilisateurs" Multiplicity="1" />
+    <End Role="reunion_utilisateur" Type="Self.reunion_utilisateur" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Utilisateurs">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="reunion_utilisateur">
+        <PropertyRef Name="utilisateurId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Reunions_Reunions">
+    <End Role="Salles" Type="Self.Salles" Multiplicity="1" />
+    <End Role="Reunions" Type="Self.Reunions" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Salles">
+        <PropertyRef Name="nom" />
+      </Principal>
+      <Dependent Role="Reunions">
+        <PropertyRef Name="Lieu" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Utilisateurs_Role">
+    <End Role="Role" Type="Self.Role" Multiplicity="1" />
+    <End Role="Utilisateurs" Type="Self.Utilisateurs" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Role">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Utilisateurs">
+        <PropertyRef Name="Role" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="GestionReunionsModelStoreContainer">
+    <EntitySet Name="Events" EntityType="Self.Events" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="reunion_utilisateur" EntityType="Self.reunion_utilisateur" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Reunions" EntityType="Self.Reunions" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Role" EntityType="Self.Role" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Salles" EntityType="Self.Salles" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Utilisateurs" EntityType="Self.Utilisateurs" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK_reunion_utilisateur_Reunions" Association="Self.FK_reunion_utilisateur_Reunions">
+      <End Role="Reunions" EntitySet="Reunions" />
+      <End Role="reunion_utilisateur" EntitySet="reunion_utilisateur" />
+    </AssociationSet>
+    <AssociationSet Name="FK_reunion_utilisateur_Utilisateurs" Association="Self.FK_reunion_utilisateur_Utilisateurs">
+      <End Role="Utilisateurs" EntitySet="Utilisateurs" />
+      <End Role="reunion_utilisateur" EntitySet="reunion_utilisateur" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Reunions_Reunions" Association="Self.FK_Reunions_Reunions">
+      <End Role="Salles" EntitySet="Salles" />
+      <End Role="Reunions" EntitySet="Reunions" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Utilisateurs_Role" Association="Self.FK_Utilisateurs_Role">
+      <End Role="Role" EntitySet="Role" />
+      <End Role="Utilisateurs" EntitySet="Utilisateurs" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>
