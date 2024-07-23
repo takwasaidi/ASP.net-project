@@ -1,0 +1,343 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<h2>Index</h2>
+<div id="calender"></div>
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"> <span id="meetingTitle"></span></h4>
+            </div>
+            <div class="modal-body">
+
+                <button id="btnDelete" class="btn btn-default btn-sm pull-right">
+                    <span class="glyphicon glyphicon-remove"></span>
+                </button>
+                <button id="btnEdit" class="btn btn-default btn-sm pull-right" style="margin-right:5px;">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                </button>
+
+
+                <p id="pDetails"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="myModalSave" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Save Meeting</h4>
+            </div>
+            <div class="modal-body">
+                <form class="col-md-12 form-horizontal">
+                    <div class="form-group">
+                        <label>Titre</label>
+                        <input type="text" id="txtTitre" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Lieu</label>
+
+                        <select id="txtLieu" class="form-control">
+                            @if (ViewBag.Lieu != null)
+                            {
+                                foreach (var salle in ViewBag.Lieu)
+                                {
+                                    <option value="@salle.Value">@salle.Text</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Start</label>
+                        <div class="input-group date" id="dtp1">
+                            <input type="text" id="txtStart" class="form-control" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Heurs</label>
+                        <input type="number" id="txtHeures" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="txtDescription" rows="3" class="form-control"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Participants</label>
+                        <div id="participants" class="checkbox-group">
+                            @foreach (var utilisateur in ViewBag.UtilisateursDisponibles)
+                            {
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" class="chkParticipant" value="@utilisateur.Nom" /> @utilisateur.Nom
+                                    </label>
+                                </div>}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Theme Color</label>
+                        <select id="ddThemeColor" class="form-control">
+                            <option value="">Default</option>
+                            <option value="red">Red</option>
+                            <option value="blue">Blue</option>
+                            <option value="black">Black</option>
+                            <option value="pink">Pink</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.css" rel="stylesheet" />
+<link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.print.css" rel="stylesheet" media="print" />
+<!-- Bootstrap CSS -->
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+<!-- Optional theme -->
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" rel="stylesheet">
+
+<!-- Bootstrap DateTimePicker CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstap-datetimepicker/4.17.47/js/bootstap-datetimepicker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <!-- Bootstrap DateTimePicker JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+    <script>
+       
+
+
+        $(document).ready(function () {
+            var selectedMeeting = null;
+            FetchReunionsAndRenderCalendar();
+
+            function FetchReunionsAndRenderCalendar() {
+                $.ajax({
+                    type: "GET",
+                    url: "/Reunions/GetReunions",
+                    success: function (data) {
+                        console.log("Données récupérées:", data);
+                        var reunions = [];
+                        $.each(data, function (i, v) {
+                            reunions.push({
+                                title: v.Titre,
+                                description: v.Description,
+                                start: moment(v.Date).format(),  // Assurez-vous que v.Date est au format correct
+                                end: v.End ? moment(v.End).format() : null, // Vérifiez que v.End est bien une date
+                                color: v.ThemeColor || '#378006', // Utilisez une couleur par défaut si ThemeColor est null
+                                allDay: v.IsFullDay || false,
+                                participants: v.Participants || [] ,
+                                lieu: v.Lieu // Inclure le lieu ici
+                            });
+                        });
+                        console.log("Réunions formatées:", reunions);
+                        GenerateCalendar(reunions);
+                    },
+                    error: function (error) {
+                        alert('Échec de la récupération des réunions.');
+                    }
+                });
+            }
+
+            function GenerateCalendar(reunions) {
+                $('#calender').fullCalendar('destroy');
+                $('#calender').fullCalendar({
+                    height: 400,
+                    defaultView: 'month', // Remplace 'defaultDate' par 'defaultView'
+                    timeFormat: 'h(:mm)a',
+                    header: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'month,agendaWeek,agendaDay'
+                    },
+                    events: reunions, // Assurez-vous que 'events' est bien utilisé ici
+                    eventColor: '#378006',
+                    eventClick: function (calEvent, jsEvent, view) {
+                        selectedMeeting = calEvent;
+                        $('#myModal #meetingTitle').text(calEvent.title);
+                        var $description = $('<div/>');
+                        $description.append($('<p/>').html('<b>Start:</b> ' + moment(calEvent.start).format("DD-MMM-YYYY HH:mm a")));
+                        if (calEvent.end != null) {
+                            $description.append($('<p/>').html('<b>End:</b> ' + moment(calEvent.end).format("DD-MMM-YYYY HH:mm a")));
+                        }
+                        $description.append($('<p/>').html('<b>Description:</b> ' + calEvent.description));
+                        $description.append($('<p/>').html('<b>Lieu:</b> ' + calEvent.lieu));
+                        $description.append($('<p/>').html('<b>Participants:</b> ' + (calEvent.participants || []).join(', '))); // Afficher les participants
+                        $('#myModal #pDetails').empty().html($description);
+                        $('#myModal').modal();
+                    },
+                    selectable: true,
+                    select: function (start, end) {
+                        selectedMeeting = {
+                            title: '',
+                            description: '',
+                            lieu: '',
+                            start: start,
+                            end: end
+                        };
+                        openAndEditForm();
+                        $('#calender').fullCalendar('unselect');
+                    },
+                    editable: true,
+                    eventResizableFromStart: true,
+                    eventDrop: function (event, delta, revertFunc) {
+                        UpdateEvent(event);
+                    },
+                    eventResize: function (event, delta, revertFunc) {
+                        UpdateEvent(event);
+                    },
+                });
+            }
+            $('#btnEdit').click(function () {
+                openAndEditForm();
+            })
+            $('#btnDelete').click(function () {
+                if (selectedMeeting != null && confirm('Are you sure?')) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/Reunions/DeleteMeeting",
+                        data: { titre: selectedMeeting.title },
+                        success: function (data) {
+                            if (data.status) {
+                                // Refresh the calendar
+                                FetchReunionsAndRenderCalendar();
+                                $('#myModal').modal('hide');
+                            }
+                        },
+                        error: function () {
+                            alert('Failed to delete the event');
+                        }
+                    });
+                }
+            });
+            $('#dtp1').datetimepicker({
+                format: 'DD/MM/YYYY HH:mm A',
+                sideBySide: true
+            });
+            function openAndEditForm() {
+                if (selectedMeeting != null) {
+                    $('#txtTitre').val(selectedMeeting.title);
+                    $('#txtStart').val(selectedMeeting.start.format('DD/MM/YYYY HH: mm A'));
+                    $('#txtEnd').val(selectedMeeting.end != null ? selectedMeeting.end.format('DD/MM/YYYY HH: mm A') : '');
+                    $('#txtDescription').val(selectedMeeting.description);
+                    $('#txtLieu').val(selectedMeeting.lieu);
+                    $('#ddThemeColor').val(selectedMeeting.color);
+                    $('#txtHeures').val(selectedMeeting.color);
+                }
+                // Afficher les participants dans la console
+                console.log("Participants sélectionnés : ", selectedMeeting.participants);
+                // Cocher les cases des participants sélectionnés
+                $('.chkParticipant').prop('checked', false); // Décocher toutes les cases d'abord
+                console.log(selectedMeeting.participants);
+                if (selectedMeeting.participants) {
+                    selectedMeeting.participants.forEach(function (participant) {
+                        $('.chkParticipant[value="' + participant + '"]').prop('checked', true);
+                    });
+                }
+                // Calculer les heures de la réunion
+                if (selectedMeeting.start && selectedMeeting.end) {
+                    var start = moment(selectedMeeting.start);
+                    var end = moment(selectedMeeting.end);
+                    var duration = moment.duration(end.diff(start));
+                    var hours = duration.asHours();
+                    $('#txtHeures').val(hours);
+                }
+                $('#myModal').modal('hide');
+                $('#myModalSave').modal();
+            }
+            $('#btnSave').click(function () {
+                //Validation
+                if ($('#txtTitre').val().trim() == "") {
+                    alert('Title required');
+                    return;
+                }
+                if ($('#txtStart').val().trim() == "") {
+                    alert('Date required');
+                    return;
+                }
+                if ($('#txtHeures').val().trim() == "") {
+                    alert('Hours required');
+                    return;
+                }
+                if ($('#txtLieu').val().trim() == "") {
+                    alert('Lieu required');
+                    return;
+                }
+                var titre = $('#txtTitre').val();
+                var start = $('#txtStart').val();
+                var description = $('#txtDescription').val();
+                var lieu = $('#txtLieu').val();
+                var heures = $('#txtHeures').val(); 
+                var participants = [];
+                $('.chkParticipant:checked').each(function () {
+                    participants.push($(this).val());
+                });
+               
+
+                var data = {
+                    Titre: titre,
+                    Date: start,
+                    Description: description,
+                    Lieu: lieu,
+                    Heures: heures, // Inclure les heures
+                    Participants: participants
+                };
+                console.log(data);
+                SaveEvent(data);
+                $('#myModalSave').modal('hide');
+            })
+            function SaveEvent(data) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Reunions/SaveMeeting",
+                    data: data,
+                    success: function (data) {
+                        if (data.status) {
+                            FetchReunionsAndRenderCalendar();
+                            $('#myModalSave').modal('hide');
+                        }
+                    },
+                    error: function () {
+                        alert('Failed');
+                    }
+                });
+            }
+            function UpdateEvent(event) {
+             
+                var duration = moment.duration(moment(event.end).diff(moment(event.start)));
+                var hours = duration.asHours(); // La durée en heures
+
+                var data = {
+                    Titre: event.title,
+                    Date: event.start.format('DD/MM/YYYY HH:mm A'),
+                    Description: event.description,
+                    Lieu: event.lieu,
+                    Heures: hours, // Inclure les heures
+                    Participants: event.participants || [] // Assurez-vous que c'est un tableau
+                };
+
+                console.log(data); // Vérifiez ce que vous envoyez
+                SaveEvent(data); // Assurez-vous que SaveEvent est bien défini
+            }
+
+        });
+
+    </script>
+}
+
+

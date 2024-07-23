@@ -88,7 +88,6 @@ C:\Users\HP\source\repos\GesReunions\GesReunions\bin\fr\System.Web.WebPages.Razo
 C:\Users\HP\source\repos\GesReunions\GesReunions\bin\fr\System.Net.Http.Formatting.resources.dll
 C:\Users\HP\source\repos\GesReunions\GesReunions\bin\fr\System.Web.Http.resources.dll
 C:\Users\HP\source\repos\GesReunions\GesReunions\bin\fr\System.Web.Http.WebHost.resources.dll
-C:\Users\HP\source\repos\GesReunions\GesReunions\obj\Debug\GesReunions.csproj.AssemblyReference.cache
 C:\Users\HP\source\repos\GesReunions\GesReunions\obj\Debug\GesReunions.csproj.CoreCompileInputs.cache
 C:\Users\HP\source\repos\GesReunions\GesReunions\obj\Debug\GesReunions.csproj.CopyComplete
 C:\Users\HP\source\repos\GesReunions\GesReunions\obj\Debug\GesReunions.dll
