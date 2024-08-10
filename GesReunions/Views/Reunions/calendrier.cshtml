@@ -1,343 +1,730 @@
 ﻿@{
     ViewBag.Title = "Home Page";
-}
+    @*Layout = "~/Views/Shared/_test.cshtml";
+  
+*@}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Modal Form</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.css" rel="stylesheet" />
+        <link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.print.css" rel="stylesheet" media="print" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
 
-<h2>Index</h2>
-<div id="calender"></div>
-<div id="myModal" class="modal fade" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title"> <span id="meetingTitle"></span></h4>
-            </div>
-            <div class="modal-body">
+    <style>
 
-                <button id="btnDelete" class="btn btn-default btn-sm pull-right">
-                    <span class="glyphicon glyphicon-remove"></span>
-                </button>
-                <button id="btnEdit" class="btn btn-default btn-sm pull-right" style="margin-right:5px;">
-                    <span class="glyphicon glyphicon-pencil"></span>
-                </button>
+@*
+        #calendar {
+            width: 100%;
+            height: 100%; /* S'assurer que le calendrier prend toute la hauteur du conteneur */
+        }
+
+        /* Styles personnalisés pour les classes FullCalendar */
+        .fc.fc-unthemed.fc-ltr {
+            /* Ajouter vos styles ici */
+            background-color: #ffffff; /* Exemple: changer la couleur de fond */
+            font-size: 16px; /* Exemple: changer la taille de la police */
+            height: 100%; /* Assurez-vous que le calendrier prend toute la hauteur du conteneur */
+            height: 100vh
+        }
+
+        .fc-toolbar {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+            .fc-toolbar .fc-right {
+                display: flex;
+                align-items: center;
+            }
+
+        .fc-event {
+            border: none;
+            border-radius: 4px;
+            padding: 5px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+            .fc-event, .fc-event:hover {
+                color: #ffffff !important;
+            }
+
+        .fc-day-grid-event .fc-content {
+            white-space: normal;
+        }
+
+        .fc-title {
+            font-weight: 600;
+        }
+
+        .fc-day-grid-event {
+            margin: 3px 0;
+        }
+
+        .modal-header {
+            background-color: #007bff;
+            color: white;
+        }*@
+
+        body {
+            background-color: #f0f8ff; /* AliceBlue */
+        }
+        #calendar {
+            background-color: #f0f8ff; /* AliceBlue */
+        }
+        .fc-event {
+            position: relative; /* Nécessaire pour positionner le pseudo-élément */
+            background-color: #4682B4 !important; /* Steel Blue */
+            border-color: #4682B4 !important; /* Steel Blue */
+            color: #ffffff !important; /* Blanc */
+            padding-left: 20px; /* Ajoute un espace pour le cercle */
+        }
+
+            /* Ajouter un petit cercle devant chaque événement */
+            .fc-event::before {
+                content: "";
+                position: absolute;
+                left: 5px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 10px;
+                height: 10px;
+                background-color: #ffffff; /* Couleur du cercle */
+                border-radius: 50%;
+            }
+
+            /* Changer la couleur des événements au survol */
+            .fc-event:hover {
+                background-color: #87CEEB !important; /* Sky Blue */
+                border-color: #87CEEB !important; /* Sky Blue */
+                color: #ffffff !important; /* Blanc */
+            }
+        /* Changer le style de l'en-tête du calendrier */
+        .fc-toolbar {
+            background-color: #333333; /* Noir */
+            color: #ffffff; /* Blanc */
+        }
+
+            /* Changer le style des titres du calendrier */
+            .fc-toolbar h2 {
+                color: #ffffff; /* Blanc */
+                font-size: 1.5em; /* Taille de police plus grande */
+            }
+            /* Style for all toolbar buttons */
+
+        /* Buttons
+--------------------------------------------------------------------------------------------------
+Lots taken from Flatly (MIT): https://bootswatch.com/4/flatly/bootstrap.css
+*/
+        /* reset */
+        .fc-button {
+            border-radius: 0;
+            overflow: visible;
+            text-transform: none;
+            margin: 0;
+            font-family: inherit;
+            font-size: inherit;
+            line-height: inherit;
+        }
+
+            .fc-button:focus {
+                outline: 1px dotted;
+                outline: 5px auto -webkit-focus-ring-color;
+            }
+
+        .fc-button {
+            -webkit-appearance: button;
+        }
+
+            .fc-button:not(:disabled) {
+                cursor: pointer;
+            }
+
+            .fc-button::-moz-focus-inner {
+                padding: 0;
+                border-style: none;
+            }
+
+        /* theme */
+        .fc-button {
+            display: inline-block;
+            font-weight: 400;
+            color: #212529;
+            text-align: center;
+            vertical-align: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            background-color: transparent;
+            border: 1px solid transparent;
+            padding: 0.4em 0.75em;
+            font-size: 1em;
+            line-height: 1.5;
+            border-radius: 30px;
+        }
+
+            .fc-button:hover {
+                color: #212529;
+                text-decoration: none;
+            }
+
+            .fc-button:focus {
+                outline: 0;
+                -webkit-box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.25);
+                box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.25);
+            }
+
+            .fc-button:disabled {
+                opacity: 0.65;
+            }
+
+        /* "primary" coloring */
+        .fc-button-primary {
+            color: #fff;
+            background-color: #ee0000;
+            border-color: #ee0000;
+        }
+
+            .fc-button-primary:hover {
+                color: #fff;
+                background-color: #9a6925;
+                border-color: #9a6925;
+            }
+
+            .fc-button-primary:focus {
+                -webkit-box-shadow: 0 0 0 0.2rem rgba(76, 91, 106, 0.5);
+                box-shadow: 0 0 0 0.2rem rgba(76, 91, 106, 0.5);
+            }
+
+            .fc-button-primary:disabled {
+                color: #fff;
+                background-color: #484848;
+                border-color: #484848;
+            }
+
+            .fc-button-primary:not(:disabled):active,
+            .fc-button-primary:not(:disabled).fc-button-active {
+                color: #fff;
+                background-color: #484848;
+                border-color: #484848;
+            }
+
+                .fc-button-primary:not(:disabled):active:focus,
+                .fc-button-primary:not(:disabled).fc-button-active:focus {
+                    -webkit-box-shadow: 0 0 0 0.2rem rgba(76, 91, 106, 0.5);
+                    box-shadow: 0 0 0 0.2rem rgba(76, 91, 106, 0.5);
+                }
+
+        /* icons within buttons */
+        .fc-button .fc-icon {
+            vertical-align: middle;
+        }
 
 
-                <p id="pDetails"></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        /* Changer le style des boutons de navigation */
+      @*  .fc-button {
+            background-color: #0056b3; /* Bleu */
+            border-color: #0056b3; /* Bleu */
+            color: #ffffff; /* Blanc */
+        }*@
+
+        /* Changer la couleur des événements sélectionnés */
+     
+        .fc-event.fc-event-selected {
+            background-color: #ff0000 !important; /* Rouge */
+            border-color: #ff0000 !important; /* Rouge */
+            color: #ffffff !important; /* Blanc */
+        }
+        .ui-autocomplete {
+            z-index: 1600;
+        }
+
+        .selected-email {
+            display: inline-flex;
+            align-items: center;
+            background-color: #e0e0e0;
+            border-radius: 12px;
+            padding: 5px 10px;
+            margin: 5px;
+            font-size: 14px;
+            color: #333;
+            position: relative;
+        }
+
+            .selected-email .remove-email {
+                margin-left: 10px;
+                cursor: pointer;
+                color: #000000; /* Noir */
+                font-weight: bold;
+                font-size: 1.2em;
+            }
+
+        #toggleMoreEmails {
+            margin-top: 10px;
+            display: block;
+        }
+       
+    </style>
+
+</head>
+<body>
+
+    <br />
+    <br />
+    <br />
+
+    <div id="calendar"></div>
+
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"> <span id="meetingTitle"></span></h4>
+                </div>
+                <div class="modal-body">
+
+                    <button id="btnDelete" class="btn btn-default btn-sm pull-right">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </button>
+                    <button id="btnEdit" class="btn btn-default btn-sm pull-right" style="margin-right:5px;">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </button>
+
+
+                    <p id="pDetails"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<div id="myModalSave" class="modal fade" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Save Meeting</h4>
-            </div>
-            <div class="modal-body">
-                <form class="col-md-12 form-horizontal">
-                    <div class="form-group">
-                        <label>Titre</label>
-                        <input type="text" id="txtTitre" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label>Lieu</label>
 
-                        <select id="txtLieu" class="form-control">
-                            @if (ViewBag.Lieu != null)
-                            {
-                                foreach (var salle in ViewBag.Lieu)
+
+    <!-- Modal -->
+    <div id="myModalSave" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <form class="form-horizontal">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Modal Header</h4>
+                    </div>
+
+                    <!-- Title Field -->
+                    <div class="form-group">
+                        <label for="txtTitre" class="col-md-3 control-label">Title</label>
+                        <div class="col-md-9">
+                            <input type="text" id="txtTitre" class="form-control" placeholder="Enter meeting title" />
+                        </div>
+                    </div>
+
+                    <!-- Location Field -->
+                    <div class="form-group">
+                        <label for="txtLieu" class="col-md-3 control-label">Location</label>
+                        <div class="col-md-9">
+                            <select id="txtLieu" class="form-control">
+                                @if (ViewBag.Lieu != null)
                                 {
-                                    <option value="@salle.Value">@salle.Text</option>
+                                    foreach (var salle in ViewBag.Lieu)
+                                    {
+                                        <option value="@salle.Value">@salle.Text</option>
+                                    }
                                 }
-                            }
-                        </select>
+                            </select>
+                        </div>
                     </div>
+                    <!-- Start Date Field -->
                     <div class="form-group">
-                        <label>Start</label>
-                        <div class="input-group date" id="dtp1">
-                            <input type="text" id="txtStart" class="form-control" />
-                            <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-calendar"></span>
-                            </span>
+                        <label for="txtStart" class="col-md-3 control-label">Start</label>
+                        <div class="col-md-9">
+                            <div class="input-group date" id="dtp1">
+                                <input type="text" id="txtStart" class="form-control" placeholder="Select start date and time" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hours Field -->
+                    <div class="form-group">
+                        <label for="txtHeures" class="col-md-3 control-label">Hours</label>
+                        <div class="col-md-9">
+                            <input type="number" id="txtHeures" class="form-control" placeholder="Enter hours" />
+                        </div>
+                    </div>
+
+                    <!-- Description Field -->
+                    <div class="form-group">
+                        <label for="txtDescription" class="col-md-3 control-label">Description</label>
+                        <div class="col-md-9">
+                            <textarea id="txtDescription" rows="3" class="form-control" placeholder="Enter meeting description"></textarea>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label>Heurs</label>
-                        <input type="number" id="txtHeures" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label>Description</label>
-                        <textarea id="txtDescription" rows="3" class="form-control"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Participants</label>
-                        <div id="participants" class="checkbox-group">
-                            @foreach (var utilisateur in ViewBag.UtilisateursDisponibles)
-                            {
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" class="chkParticipant" value="@utilisateur.Nom" /> @utilisateur.Nom
-                                    </label>
-                                </div>}
+                        <label for="utilisateurEmail" class="col-md-3 control-label">Participants</label>
+                        <div class="col-md-9">
+                            <input type="text" id="utilisateurEmail" class="form-control" placeholder="Type email to add participants" />
+                            <div id="selectedUsers"></div>
+                            <button id="toggleMoreEmails" class="btn btn-link" style="display: none;">
+                                Afficher plus
+                            </button>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>Theme Color</label>
-                        <select id="ddThemeColor" class="form-control">
-                            <option value="">Default</option>
-                            <option value="red">Red</option>
-                            <option value="blue">Blue</option>
-                            <option value="black">Black</option>
-                            <option value="pink">Pink</option>
-                        </select>
+                        <label for="ddThemeColor" class="col-md-3 control-label">Theme Color</label>
+                        <div class="col-md-9">
+                            <select id="ddThemeColor" class="form-control">
+                                <option value="">Default</option>
+                                <option value="red">Red</option>
+                                <option value="blue">Blue</option>
+                                <option value="black">Black</option>
+                                <option value="pink">Pink</option>
+                            </select>
+                        </div>
                     </div>
-                    <button type="button" class="btn btn-success" id="btnSave">Save</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
                 </form>
             </div>
+            <!-- Buttons -->
+
+
         </div>
     </div>
-</div>
-<link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.css" rel="stylesheet" />
-<link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.print.css" rel="stylesheet" media="print" />
-<!-- Bootstrap CSS -->
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-<!-- Optional theme -->
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" rel="stylesheet">
 
-<!-- Bootstrap DateTimePicker CSS -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
-@section Scripts {
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstap-datetimepicker/4.17.47/js/bootstap-datetimepicker.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
-    <!-- Bootstrap DateTimePicker JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
-    <script>
-       
+    <!-- Modal Save Meeting -->
+    <!-- Add this CSS to your stylesheet or in a <style> block -->
 
 
-        $(document).ready(function () {
-            var selectedMeeting = null;
-            FetchReunionsAndRenderCalendar();
 
-            function FetchReunionsAndRenderCalendar() {
-                $.ajax({
-                    type: "GET",
-                    url: "/Reunions/GetReunions",
-                    success: function (data) {
-                        console.log("Données récupérées:", data);
-                        var reunions = [];
-                        $.each(data, function (i, v) {
-                            reunions.push({
-                                title: v.Titre,
-                                description: v.Description,
-                                start: moment(v.Date).format(),  // Assurez-vous que v.Date est au format correct
-                                end: v.End ? moment(v.End).format() : null, // Vérifiez que v.End est bien une date
-                                color: v.ThemeColor || '#378006', // Utilisez une couleur par défaut si ThemeColor est null
-                                allDay: v.IsFullDay || false,
-                                participants: v.Participants || [] ,
-                                lieu: v.Lieu // Inclure le lieu ici
-                            });
+    @section Scripts {
+        <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+        <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstap-datetimepicker/4.17.47/js/bootstap-datetimepicker.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+        <!-- Bootstrap DateTimePicker JavaScript -->
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+
+
+        <script>
+            $(function () {
+                // Initialisation de l'autocomplétion
+                $("#utilisateurEmail").autocomplete({
+                    source: function (request, response) {
+                        $.ajax({
+                            type: "POST",
+                            url: "/Reunions/GetUserEmails",
+                            data: { term: request.term },
+                            success: function (data) {
+                                var formattedData = $.map(data, function (item) {
+                                    return {
+                                        label: item.Email,
+                                        value: item.Email,
+                                        id: item.Id
+                                    };
+                                });
+                                response(formattedData);
+                            }
                         });
-                        console.log("Réunions formatées:", reunions);
-                        GenerateCalendar(reunions);
                     },
-                    error: function (error) {
-                        alert('Échec de la récupération des réunions.');
+                    select: function (event, ui) {
+                        var selectedEmail = ui.item.value;
+
+                        // Vérifiez si l'email est déjà présent
+                        if ($("#selectedUsers input[value='" + selectedEmail + "']").length === 0) {
+                            $("#selectedUsers").append(
+                                '<div class="selected-email">' +
+                                selectedEmail +
+                                '<span class="remove-email">&times;</span>' + // ajout de la croix de suppression
+                                '<input type="hidden" name="utilisateursSelectionnes" value="' + selectedEmail + '" />' +
+                                '</div>'
+                            );
+
+                        }
+                        $(this).val('');
+                        return false;
                     }
                 });
-            }
 
-            function GenerateCalendar(reunions) {
-                $('#calender').fullCalendar('destroy');
-                $('#calender').fullCalendar({
-                    height: 400,
-                    defaultView: 'month', // Remplace 'defaultDate' par 'defaultView'
-                    timeFormat: 'h(:mm)a',
-                    header: {
-                        left: 'prev,next today',
-                        center: 'title',
-                        right: 'month,agendaWeek,agendaDay'
-                    },
-                    events: reunions, // Assurez-vous que 'events' est bien utilisé ici
-                    eventColor: '#378006',
-                    eventClick: function (calEvent, jsEvent, view) {
-                        selectedMeeting = calEvent;
-                        $('#myModal #meetingTitle').text(calEvent.title);
-                        var $description = $('<div/>');
-                        $description.append($('<p/>').html('<b>Start:</b> ' + moment(calEvent.start).format("DD-MMM-YYYY HH:mm a")));
-                        if (calEvent.end != null) {
-                            $description.append($('<p/>').html('<b>End:</b> ' + moment(calEvent.end).format("DD-MMM-YYYY HH:mm a")));
+                // Fonction pour récupérer les réunions et générer le calendrier
+                function FetchReunionsAndRenderCalendar() {
+                    $.ajax({
+                        type: "GET",
+                        url: "/Reunions/GetReunions",
+                        success: function (data) {
+                            var reunions = [];
+                            $.each(data, function (i, v) {
+                                reunions.push({
+                                    title: v.Titre,
+                                    description: v.Description,
+                                    start: moment(v.Date).format(),
+                                    end: v.End ? moment(v.End).format() : null,
+                                    color: v.ThemeColor || '#378006',
+                                    allDay: v.IsFullDay || false,
+                                    participants: v.Participants || [],
+                                    lieu: v.Lieu
+                                });
+                            });
+                            GenerateCalendar(reunions);
+                        },
+                        error: function () {
+                            alert('Échec de la récupération des réunions.');
                         }
-                        $description.append($('<p/>').html('<b>Description:</b> ' + calEvent.description));
-                        $description.append($('<p/>').html('<b>Lieu:</b> ' + calEvent.lieu));
-                        $description.append($('<p/>').html('<b>Participants:</b> ' + (calEvent.participants || []).join(', '))); // Afficher les participants
-                        $('#myModal #pDetails').empty().html($description);
-                        $('#myModal').modal();
-                    },
-                    selectable: true,
-                    select: function (start, end) {
-                        selectedMeeting = {
-                            title: '',
-                            description: '',
-                            lieu: '',
-                            start: start,
-                            end: end
-                        };
-                        openAndEditForm();
-                        $('#calender').fullCalendar('unselect');
-                    },
-                    editable: true,
-                    eventResizableFromStart: true,
-                    eventDrop: function (event, delta, revertFunc) {
-                        UpdateEvent(event);
-                    },
-                    eventResize: function (event, delta, revertFunc) {
-                        UpdateEvent(event);
-                    },
+                    });
+                }
+
+                // Fonction pour générer le calendrier
+                function GenerateCalendar(reunions) {
+                    $('#calendar').fullCalendar('destroy');
+                    $('#calendar').fullCalendar({
+
+                        defaultView: 'month',
+                        timeFormat: 'h(:mm)a',
+                        header: {
+                            left: 'prev,next today',
+                            center: 'title',
+                            right: 'month,agendaWeek,agendaDay'
+                        },
+                        events: reunions,
+                        eventColor: '#0000FF',
+                        eventClick: function (calEvent) {
+                            selectedMeeting = calEvent;
+                            $('#myModal #meetingTitle').text(calEvent.title);
+                            var $description = $('<div/>');
+                            $description.append($('<p/>').html('<b>Start:</b> ' + moment(calEvent.start).format("DD-MMM-YYYY HH:mm a")));
+                            if (calEvent.end != null) {
+                                $description.append($('<p/>').html('<b>End:</b> ' + moment(calEvent.end).format("DD-MMM-YYYY HH:mm a")));
+                            }
+                            $description.append($('<p/>').html('<b>Description:</b> ' + calEvent.description));
+                            $description.append($('<p/>').html('<b>Lieu:</b> ' + calEvent.lieu));
+                            $description.append($('<p/>').html('<b>Participants:</b> ' + (calEvent.participants || []).join(', ')));
+                            $('#myModal #pDetails').empty().html($description);
+                            $('#myModal').modal();
+                        },
+                        selectable: true,
+                        select: function (start, end) {
+                            selectedMeeting = {
+                                title: '',
+                                description: '',
+                                lieu: '',
+                                start: start,
+                                end: end,
+                                participants: []
+                            };
+                            openAndEditForm();
+                            $('#calendar').fullCalendar('unselect');
+                        },
+                        editable: true,
+                        eventResizableFromStart: true,
+                        eventDrop: function (event) {
+                            UpdateEvent(event);
+                        },
+                        eventResize: function (event) {
+                            UpdateEvent(event);
+                        },
+                    });
+                }
+
+                // Gestion des événements des boutons
+                $('#btnEdit').click(function () {
+                    openAndEditForm();
                 });
-            }
-            $('#btnEdit').click(function () {
-                openAndEditForm();
-            })
-            $('#btnDelete').click(function () {
-                if (selectedMeeting != null && confirm('Are you sure?')) {
+
+                $('#btnDelete').click(function () {
+                    if (selectedMeeting != null && confirm('Are you sure?')) {
+                        $.ajax({
+                            type: "POST",
+                            url: "/Reunions/DeleteMeeting",
+                            data: { titre: selectedMeeting.title },
+                            success: function (data) {
+                                if (data.status) {
+                                    FetchReunionsAndRenderCalendar();
+                                    $('#myModal').modal('hide');
+                                }
+                            },
+                            error: function () {
+                                alert('Failed to delete the event');
+                            }
+                        });
+                    }
+                });
+
+                $('#dtp1').datetimepicker({
+                    format: 'DD/MM/YYYY HH:mm A',
+                    sideBySide: true
+                });
+
+                // Fonction pour ouvrir et éditer le formulaire
+                function openAndEditForm() {
+                    if (selectedMeeting != null) {
+                        $('#txtTitre').val(selectedMeeting.title);
+                        $('#txtStart').val(selectedMeeting.start.format('DD/MM/YYYY HH:mm A'));
+                        $('#txtEnd').val(selectedMeeting.end ? selectedMeeting.end.format('DD/MM/YYYY HH:mm A') : '');
+                        $('#txtDescription').val(selectedMeeting.description);
+                        $('#txtLieu').val(selectedMeeting.lieu);
+                        $('#ddThemeColor').val(selectedMeeting.color);
+                        $('#txtHeures').val(selectedMeeting.color);
+
+                        // Ajouter les participants sélectionnés à la div `#selectedUsers`
+                        $('#selectedUsers').empty();
+                        selectedMeeting.participants.forEach(function (participant) {
+                            $('#selectedUsers').append(
+                                '<div class="selected-email">' +
+                                participant +
+                                '<span class="remove-email">&times;</span>' + // ajout de la croix de suppression
+                                '<input type="hidden" name="utilisateursSelectionnes" value="' + participant + '" />' +
+                                '</div>'
+                            );
+                        });
+
+                        // Gérer le clic sur la croix de suppression
+                        $('#selectedUsers').off('click', '.remove-email').on('click', '.remove-email', function () {
+                            $(this).closest('.selected-email').remove();
+
+                        });
+
+                        // Calculer les heures
+                        if (selectedMeeting.start && selectedMeeting.end) {
+                            var start = moment(selectedMeeting.start);
+                            var end = moment(selectedMeeting.end);
+                            var duration = moment.duration(end.diff(start));
+                            var hours = duration.asHours();
+                            $('#txtHeures').val(hours);
+                        }
+                        $('#myModal').modal('hide');
+                        $('#myModalSave').modal();
+                    }
+                }
+
+                $("#myModalSave").css("z-index", "1500");
+
+                // Fonction pour enregistrer les modifications
+                $('#btnSave').click(function () {
+                    if ($('#txtTitre').val().trim() == "") {
+                        alert('Title required');
+                        return;
+                    }
+                    if ($('#txtStart').val().trim() == "") {
+                        alert('Date required');
+                        return;
+                    }
+                    if ($('#txtHeures').val().trim() == "") {
+                        alert('Hours required');
+                        return;
+                    }
+                    if ($('#txtLieu').val().trim() == "") {
+                        alert('Lieu required');
+                        return;
+                    }
+                    var titre = $('#txtTitre').val();
+                    var start = $('#txtStart').val();
+                    var description = $('#txtDescription').val();
+                    var lieu = $('#txtLieu').val();
+                    var heures = $('#txtHeures').val();
+                    var participants = [];
+                    console.log(participants);
+                    // Récupérer les participants correctement
+                    $('#selectedUsers input[name="utilisateursSelectionnes"]').each(function () {
+                        participants.push($(this).val());
+                    });
+
+                    var data = {
+                        Titre: titre,
+                        Date: start,
+                        Description: description,
+                        Lieu: lieu,
+                        Heures: heures,
+                        Participants: participants
+                    };
+                    console.log(data);
+
+                    SaveEvent(data);
+                    $('#myModalSave').modal('hide');
+                });
+
+                // Fonction pour enregistrer un événement
+                function SaveEvent(data) {
                     $.ajax({
                         type: "POST",
-                        url: "/Reunions/DeleteMeeting",
-                        data: { titre: selectedMeeting.title },
+                        url: "/Reunions/SaveMeeting",
+                        data: data,
                         success: function (data) {
                             if (data.status) {
-                                // Refresh the calendar
                                 FetchReunionsAndRenderCalendar();
-                                $('#myModal').modal('hide');
+                                $('#myModalSave').modal('hide');
                             }
                         },
                         error: function () {
-                            alert('Failed to delete the event');
+                            alert('Failed');
                         }
                     });
                 }
-            });
-            $('#dtp1').datetimepicker({
-                format: 'DD/MM/YYYY HH:mm A',
-                sideBySide: true
-            });
-            function openAndEditForm() {
-                if (selectedMeeting != null) {
-                    $('#txtTitre').val(selectedMeeting.title);
-                    $('#txtStart').val(selectedMeeting.start.format('DD/MM/YYYY HH: mm A'));
-                    $('#txtEnd').val(selectedMeeting.end != null ? selectedMeeting.end.format('DD/MM/YYYY HH: mm A') : '');
-                    $('#txtDescription').val(selectedMeeting.description);
-                    $('#txtLieu').val(selectedMeeting.lieu);
-                    $('#ddThemeColor').val(selectedMeeting.color);
-                    $('#txtHeures').val(selectedMeeting.color);
-                }
-                // Afficher les participants dans la console
-                console.log("Participants sélectionnés : ", selectedMeeting.participants);
-                // Cocher les cases des participants sélectionnés
-                $('.chkParticipant').prop('checked', false); // Décocher toutes les cases d'abord
-                console.log(selectedMeeting.participants);
-                if (selectedMeeting.participants) {
-                    selectedMeeting.participants.forEach(function (participant) {
-                        $('.chkParticipant[value="' + participant + '"]').prop('checked', true);
-                    });
-                }
-                // Calculer les heures de la réunion
-                if (selectedMeeting.start && selectedMeeting.end) {
-                    var start = moment(selectedMeeting.start);
-                    var end = moment(selectedMeeting.end);
-                    var duration = moment.duration(end.diff(start));
+
+                // Fonction pour mettre à jour un événement
+                function UpdateEvent(event) {
+                    var duration = moment.duration(moment(event.end).diff(moment(event.start)));
                     var hours = duration.asHours();
-                    $('#txtHeures').val(hours);
-                }
-                $('#myModal').modal('hide');
-                $('#myModalSave').modal();
-            }
-            $('#btnSave').click(function () {
-                //Validation
-                if ($('#txtTitre').val().trim() == "") {
-                    alert('Title required');
-                    return;
-                }
-                if ($('#txtStart').val().trim() == "") {
-                    alert('Date required');
-                    return;
-                }
-                if ($('#txtHeures').val().trim() == "") {
-                    alert('Hours required');
-                    return;
-                }
-                if ($('#txtLieu').val().trim() == "") {
-                    alert('Lieu required');
-                    return;
-                }
-                var titre = $('#txtTitre').val();
-                var start = $('#txtStart').val();
-                var description = $('#txtDescription').val();
-                var lieu = $('#txtLieu').val();
-                var heures = $('#txtHeures').val(); 
-                var participants = [];
-                $('.chkParticipant:checked').each(function () {
-                    participants.push($(this).val());
-                });
-               
 
-                var data = {
-                    Titre: titre,
-                    Date: start,
-                    Description: description,
-                    Lieu: lieu,
-                    Heures: heures, // Inclure les heures
-                    Participants: participants
-                };
-                console.log(data);
-                SaveEvent(data);
-                $('#myModalSave').modal('hide');
-            })
-            function SaveEvent(data) {
-                $.ajax({
-                    type: "POST",
-                    url: "/Reunions/SaveMeeting",
-                    data: data,
-                    success: function (data) {
-                        if (data.status) {
-                            FetchReunionsAndRenderCalendar();
-                            $('#myModalSave').modal('hide');
+                    var data = {
+                        Titre: event.title,
+                        Date: moment(event.start).format(),
+                        Description: event.description,
+                        Lieu: event.lieu,
+                        Heures: hours,
+                        Participants: event.participants
+                    };
+
+                    console.log(data);
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/Reunions/UpdateMeeting",
+                        data: JSON.stringify(data), // Utilisez JSON.stringify pour envoyer des objets complexes
+                        contentType: "application/json; charset=utf-8", // Assurez-vous que le type de contenu est JSON
+                        success: function (data) {
+                            if (data.status) {
+                                FetchReunionsAndRenderCalendar();
+                                $('#myModalSave').modal('hide');
+                            }
+                        },
+                        error: function () {
+                            alert('Failed');
                         }
-                    },
-                    error: function () {
-                        alert('Failed');
-                    }
-                });
-            }
-            function UpdateEvent(event) {
-             
-                var duration = moment.duration(moment(event.end).diff(moment(event.start)));
-                var hours = duration.asHours(); // La durée en heures
+                    });
+                }
 
-                var data = {
-                    Titre: event.title,
-                    Date: event.start.format('DD/MM/YYYY HH:mm A'),
-                    Description: event.description,
-                    Lieu: event.lieu,
-                    Heures: hours, // Inclure les heures
-                    Participants: event.participants || [] // Assurez-vous que c'est un tableau
-                };
+                // Initialiser le calendrier
+                FetchReunionsAndRenderCalendar();
+            });
 
-                console.log(data); // Vérifiez ce que vous envoyez
-                SaveEvent(data); // Assurez-vous que SaveEvent est bien défini
-            }
 
-        });
-
-    </script>
-}
+        </script>
+    }
+</body>
+</html>
 
 

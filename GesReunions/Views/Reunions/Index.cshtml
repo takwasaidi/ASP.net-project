@@ -4,71 +4,137 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
-
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Titre)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Description)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Date)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Heures)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Salles.nom)
-        </th>
-        <th>
-            Utilisateurs
-        </th>
-        <th></th>
-    </tr>
-
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Titre)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Date)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Heures)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Salles.nom)
-            </td>
-            <td>
-                @if (item.reunion_utilisateur != null && item.reunion_utilisateur.Any())
-                {
-                    <ul>
-                        @foreach (var ru in item.reunion_utilisateur)
-                        {
-                            <li>@ru.Utilisateurs.Nom</li>
-                        }
-                    </ul> }
-                else
-                {
-                    <p>Aucun utilisateur</p>}
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.Titre }) |
-                @Html.ActionLink("Details", "Details", new { id = item.Titre }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.Titre })
-            </td>
-        </tr>
+<style>
+    /* Classe personnalisée pour les boutons */
+    .btn-custom {
+        color: #fff; /* Couleur du texte */
+        background-color: #007bff; /* Couleur de fond */
+        border-color: #007bff; /* Couleur de la bordure */
+        padding: 5px 10px; /* Espacement interne */
+        font-size: 14px; /* Taille de la police */
+        border-radius: 4px; /* Bords arrondis */
+        text-decoration: none; /* Retirer le soulignement par défaut */
     }
 
+        .btn-custom:hover {
+            color: #fff; /* Couleur du texte au survol */
+            background-color: #0056b3; /* Couleur de fond au survol */
+            border-color: #004085; /* Couleur de la bordure au survol */
+        }
+
+    /* Styles pour la table */
+    .table {
+        width: 100%;
+        margin-bottom: 1rem;
+        color: #212529;
+        border-collapse: collapse; /* Pour éviter les espaces entre les cellules */
+    }
+
+        .table th, .table td {
+            padding: 0.75rem;
+            vertical-align: top;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .table thead th {
+            vertical-align: bottom;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .table tbody + tbody {
+            border-top: 2px solid #dee2e6;
+        }
+
+        .table .thead-dark th {
+            color: #fff;
+            background-color: #343a40;
+            border-color: #454d55;
+        }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #f2f2f2;
+    }
+
+    .table-bordered {
+        border: 1px solid #dee2e6;
+    }
+
+        .table-bordered th, .table-bordered td {
+            border: 1px solid #dee2e6;
+        }
+</style>
+
+<br />
+<br />
+<br />
+<br />
+<p>
+    @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-primary" })
+</p>
+<table class="table table-striped table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Titre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Heures)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Salles.nom)
+            </th>
+            <th>
+                Utilisateurs
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Titre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Heures)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Salles.nom)
+                </td>
+                <td>
+                    @if (item.reunion_utilisateur != null && item.reunion_utilisateur.Any())
+                    {
+                        <ul>
+                            @foreach (var ru in item.reunion_utilisateur)
+                            {
+                                <li>@ru.Utilisateurs.Nom</li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p>Aucun utilisateur</p>
+                    }
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Titre }, new { @class = "btn btn-sm btn-custom" }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.Titre }, new { @class = "btn btn-sm btn-custom" }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Titre }, new { @class = "btn btn-sm btn-custom" })
+                </td>
+            </tr>
+        }
+    </tbody>
 </table>

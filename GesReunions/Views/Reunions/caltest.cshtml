@@ -1,0 +1,165 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_test.cshtml";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Modal Form</title>
+
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.css" rel="stylesheet" />
+    <link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.print.css" rel="stylesheet" media="print" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+
+    <style>
+
+
+        .ui-autocomplete {
+            z-index: 1600;
+        }
+
+        .selected-email {
+            display: inline-flex;
+            align-items: center;
+            background-color: #e0e0e0;
+            border-radius: 12px;
+            padding: 5px 10px;
+            margin: 5px;
+            font-size: 14px;
+            color: #333;
+            position: relative;
+        }
+
+            .selected-email .remove-email {
+                margin-left: 10px;
+                cursor: pointer;
+                color: #000000; /* Noir */
+                font-weight: bold;
+                font-size: 1.2em;
+            }
+
+        #toggleMoreEmails {
+            margin-top: 10px;
+            display: block;
+        }
+
+
+    </style>
+
+</head>
+<body>
+
+    <div id="calendar"></div>
+
+
+    @section Scripts {
+        <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+        <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js"></script>
+     
+
+        <script>
+            $(function () {
+                // Initialisation de l'autocomplétion
+                $("#utilisateurEmail").autocomplete({
+                    source: function (request, response) {
+                        $.ajax({
+                            type: "POST",
+                            url: "/Reunions/GetUserEmails",
+                            data: { term: request.term },
+                            success: function (data) {
+                                var formattedData = $.map(data, function (item) {
+                                    return {
+                                        label: item.Email,
+                                        value: item.Email,
+                                        id: item.Id
+                                    };
+                                });
+                                response(formattedData);
+                            }
+                        });
+                    },
+                    select: function (event, ui) {
+                        var selectedEmail = ui.item.value;
+
+                        // Vérifiez si l'email est déjà présent
+                        if ($("#selectedUsers input[value='" + selectedEmail + "']").length === 0) {
+                            $("#selectedUsers").append(
+                                '<div class="selected-email">' +
+                                selectedEmail +
+                                '<span class="remove-email">&times;</span>' + // ajout de la croix de suppression
+                                '<input type="hidden" name="utilisateursSelectionnes" value="' + selectedEmail + '" />' +
+                                '</div>'
+                            );
+
+                        }
+                        $(this).val('');
+                        return false;
+                    }
+                });
+
+                // Fonction pour récupérer les réunions et générer le calendrier
+                function FetchReunionsAndRenderCalendar() {
+                    $.ajax({
+                        type: "GET",
+                        url: "/Reunions/GetReunions",
+                        success: function (data) {
+                            var reunions = [];
+                            $.each(data, function (i, v) {
+                                reunions.push({
+                                    title: v.Titre,
+                                    description: v.Description,
+                                    start: moment(v.Date).format(),
+                                    end: v.End ? moment(v.End).format() : null,
+                                    color: v.ThemeColor || '#378006',
+                                    allDay: v.IsFullDay || false,
+                                    participants: v.Participants || [],
+                                    lieu: v.Lieu
+                                });
+                            });
+                            GenerateCalendar(reunions);
+                        },
+                        error: function () {
+                            alert('Échec de la récupération des réunions.');
+                        }
+                    });
+                }
+
+                // Fonction pour générer le calendrier
+                function GenerateCalendar(reunions) {
+                    $('#calendar').fullCalendar('destroy');
+                    $('#calendar').fullCalendar({
+                        height: 1000,
+                        defaultView: 'month',
+                        timeFormat: 'h(:mm)a',
+                        header: {
+                            left: 'prev,next today',
+                            center: 'title',
+                            right: 'month,agendaWeek,agendaDay'
+                        },
+                        events: reunions,
+                    });
+                }
+
+               
+                FetchReunionsAndRenderCalendar();
+            });
+
+
+        </script>
+    }
+</body>
+</html>
+
+
+>

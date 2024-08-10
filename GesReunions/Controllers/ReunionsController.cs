@@ -19,13 +19,28 @@ namespace GesReunions.Controllers
         // GET: Reunions
         public ActionResult Index()
         {
-            //var reunions = db.Reunions.Include(r => r.Salles);
-            //return View(reunions.ToList());
+            // Récupérer le nom d'utilisateur Windows
+            var userName = User.Identity.Name;
+
+            // Trouver l'utilisateur dans la base de données en utilisant le nom d'utilisateur
+            var utilisateur = db.Utilisateurs.SingleOrDefault(u => u.CompteWindows == userName);
+            if (utilisateur == null)
+            {
+                // Gérer le cas où l'utilisateur n'existe pas dans la base de données
+                return HttpNotFound();
+            }
+
+            // Filtrer les réunions en fonction de l'ID de l'utilisateur connecté
             var reunions = db.Reunions
+                .Where(r => r.reunion_utilisateur.Any(u => u.utilisateurId == utilisateur.Id))
+                .ToList();
+
+            return View(reunions);
+            /*var reunions = db.Reunions
                     .Include(r => r.Salles)
                     .Include(r => r.reunion_utilisateur.Select(ru => ru.Utilisateurs))
                     .ToList();
-            return View(reunions);
+            return View(reunions);*/
         }
 
         // GET: Reunions/Details/5
@@ -43,17 +58,27 @@ namespace GesReunions.Controllers
             return View(reunions);
         }
 
-        // GET: Reunions/Create
+       
+
+        // GET: Reunions/GetUserEmails
+        public JsonResult GetUserEmails(string term)
+        {
+            
+            var utilisateurs = db.Utilisateurs.ToList();
+            var result = utilisateurs.Where(r => r.Email.Contains(term)).Select(r => new
+            {
+                Id = r.Id,
+                Email = r.Email
+            }).ToList();
+
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
         public ActionResult Create()
-        {    // hedhy ken bech nkhdem methode select 
-            //ViewBag.Lieu = new SelectList(db.Salles, "nom", "nom");
-            //ViewBag.UtilisateursDisponibles = new MultiSelectList(db.Utilisateurs, "Id", "Nom");
-            //return View();
+        {
             ViewBag.Lieu = new SelectList(db.Salles, "nom", "nom");
             ViewBag.UtilisateursDisponibles = db.Utilisateurs.ToList();
             return View();
         }
-
         // POST: Reunions/Create
         // Pour vous protéger des attaques par survalidation, activez les propriétés spécifiques auxquelles vous souhaitez vous lier. Pour 
         // plus de détails, consultez https://go.microsoft.com/fwlink/?LinkId=317598.
@@ -208,7 +233,7 @@ namespace GesReunions.Controllers
                 End = r.Date.AddHours(r.Heures).ToString("yyyy-MM-ddTHH:mm:ss"), // Calcul de la fin
                 ThemeColor = "#378006", // Couleur par défaut, ajustez si nécessaire
                 IsFullDay = false, // Ajustez selon la logique de votre application
-                Participants = r.reunion_utilisateur.Select(ru => ru.Utilisateurs.Nom).ToList(),
+                Participants = r.reunion_utilisateur.Select(ru => ru.Utilisateurs.Email).ToList(),
                 Lieu = r.Lieu // Ajouter le lieu
             }).ToList();
 
@@ -218,8 +243,8 @@ namespace GesReunions.Controllers
         public JsonResult SaveMeeting(SaveMeetingViewModel model)
         {
             var status = false;
-            Console.WriteLine("Titre: " + model.Titre);
-            Console.WriteLine("Participants: " + string.Join(", ", model.Participants));
+           /* Console.WriteLine("Titre: " + model.Titre);
+            Console.WriteLine("Participants: " + string.Join(", ", model.Participants));*/
             if (!string.IsNullOrEmpty(model.Titre))
             {
                 var meeting = db.Reunions
@@ -242,7 +267,80 @@ namespace GesReunions.Controllers
                     // Ajouter les nouveaux participants
                     foreach (var participant in model.Participants)
                     {
-                        var utilisateur = db.Utilisateurs.FirstOrDefault(u => u.Nom == participant);
+                        var utilisateur = db.Utilisateurs.FirstOrDefault(u => u.Email == participant);
+                        if (utilisateur != null)
+                        {
+                            meeting.reunion_utilisateur.Add(new reunion_utilisateur
+                            {
+                                utilisateurId = utilisateur.Id,
+                                ReunionTitre = meeting.Titre
+                            });
+                        }
+                    }
+                }
+                else
+                {
+                    // Nouvelle réunion
+                    meeting = new Reunions
+                    {
+                        Titre = model.Titre,
+                        Description = model.Description,
+                        Date = model.Date,
+                        Heures = model.Heures,
+                        Lieu = model.Lieu,
+                        reunion_utilisateur = new List<reunion_utilisateur>()
+                    };
+
+                    foreach (var participant in model.Participants)
+                    {
+                        var utilisateur = db.Utilisateurs.FirstOrDefault(u => u.Email == participant);
+                        if (utilisateur != null)
+                        {
+                            meeting.reunion_utilisateur.Add(new reunion_utilisateur
+                            {
+                                utilisateurId = utilisateur.Id,
+                                ReunionTitre = meeting.Titre
+                            });
+                        }
+                    }
+                    db.Reunions.Add(meeting);
+                }
+
+                db.SaveChanges();
+                status = true;
+            }
+
+            return Json(new { status = status });
+        }
+        [HttpPost]
+        public JsonResult UpdateMeeting(SaveMeetingViewModel model)
+        {
+            var status = false;
+            /* Console.WriteLine("Titre: " + model.Titre);
+             Console.WriteLine("Participants: " + string.Join(", ", model.Participants));*/
+            if (!string.IsNullOrEmpty(model.Titre))
+            {
+                var meeting = db.Reunions
+                    .Include(r => r.reunion_utilisateur) // Inclure les participants existants
+                    .FirstOrDefault(a => a.Titre == model.Titre);
+
+                if (meeting != null)
+                {
+                    // Mise à jour
+                    meeting.Description = model.Description;
+                    meeting.Date = model.Date;
+                    meeting.Heures = model.Heures;
+                    meeting.Lieu = model.Lieu;
+
+
+                    // Supprimer les anciens participants
+                    var existingParticipants = meeting.reunion_utilisateur.ToList();
+                    db.reunion_utilisateur.RemoveRange(existingParticipants);
+                    Console.WriteLine("Participants: " + string.Join(", ", model.Participants));
+                    // Ajouter les nouveaux participants
+                    foreach (var participant in model.Participants)
+                    {
+                        var utilisateur = db.Utilisateurs.FirstOrDefault(u => u.Email == participant);
                         if (utilisateur != null)
                         {
                             meeting.reunion_utilisateur.Add(new reunion_utilisateur

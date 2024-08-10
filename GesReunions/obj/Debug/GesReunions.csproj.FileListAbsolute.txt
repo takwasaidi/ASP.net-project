@@ -98,3 +98,4 @@ C:\Users\HP\source\repos\GesReunions\GesReunions\bin\EntityFramework.xml
 C:\Users\HP\source\repos\GesReunions\GesReunions\bin\EntityFramework.SqlServer.xml
 C:\Users\HP\source\repos\GesReunions\GesReunions\bin\fr\EntityFramework.resources.dll
 C:\Users\HP\source\repos\GesReunions\GesReunions\bin\fr\EntityFramework.SqlServer.resources.dll
+C:\Users\HP\source\repos\GesReunions\GesReunions\obj\Debug\GesReunions.csproj.AssemblyReference.cache

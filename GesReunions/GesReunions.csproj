@@ -262,6 +262,9 @@
     <Content Include="Views\Reunions\Edit.cshtml" />
     <Content Include="Views\Reunions\Index.cshtml" />
     <Content Include="Views\Reunions\calendrier.cshtml" />
+    <Content Include="Views\Shared\_test.cshtml" />
+    <Content Include="Views\Reunions\test.cshtml" />
+    <Content Include="Views\Reunions\caltest.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

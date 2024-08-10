@@ -7,6 +7,7 @@
     <title>@ViewBag.Title - Mon application ASP.NET</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
         /* Styles pour la sidebar */
         .sidebar {
@@ -15,7 +16,7 @@
             left: 0;
             height: calc(100% - 51px); /* Ajuste pour ne pas chevaucher la navbar */
             width: 250px;
-            background-color: #f8f9fa;
+            background-color: #222; /* Noir */
             padding: 15px;
             border-right: 1px solid #ddd;
             z-index: 1000;
@@ -23,29 +24,100 @@
 
             .sidebar h4 {
                 margin-top: 0;
+                color: #fff; /* Blanc */
             }
 
             .sidebar a {
                 display: block;
                 padding: 10px;
-                color: #333;
+                color: #ccc; /* Gris clair */
                 text-decoration: none;
                 border-radius: 4px;
+                font-size: 16px; /* Taille de police */
+                line-height: 24px; /* Hauteur de ligne */
+                margin-bottom: 10px; /* Espace entre les éléments */
             }
 
                 .sidebar a:hover {
-                    background-color: #ddd;
+                    background-color: #495057; /* Gris foncé */
+                    color: #fff; /* Blanc */
                 }
 
-        .content {
-            margin-left: 250px; /* Ajuste la marge pour laisser place à la sidebar */
-            padding: 15px;
+                .sidebar a.active {
+                    background-color: #fff; /* Blanc */
+                    color: #000; /* Noir */
+                }
+
+        .dropdown {
+            position: relative;
+            display: block;
+            margin-bottom: 10px;
         }
 
-        .navbar {
-            z-index: 1020; /* Assure que la navbar est au-dessus de la sidebar */
+        .dropdown-toggle {
+            display: block;
+            padding: 10px;
+            color: #ccc; /* Gris clair */
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 16px; /* Taille de police */
+            line-height: 24px; /* Hauteur de ligne */
+            background-color: #000; /* Noir */
         }
+
+            .dropdown-toggle:hover {
+                background-color: #495057; /* Gris foncé */
+                color: #fff; /* Blanc */
+            }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #000; /* Noir */
+            padding: 0;
+            border: 1px solid #ddd;
+            z-index: 1001;
+            width: 100%;
+        }
+
+            .dropdown-menu a {
+                display: block;
+                padding: 10px;
+                color: #ccc; /* Gris clair */
+                text-decoration: none;
+                border-radius: 4px;
+                font-size: 16px; /* Taille de police */
+                line-height: 24px; /* Hauteur de ligne */
+            }
+
+                .dropdown-menu a:hover {
+                    background-color: #495057; /* Gris foncé */
+                    color: #fff; /* Blanc */
+                }
+
+                .dropdown-menu a i {
+                    margin-right: 10px; /* Espace entre l'icône et le texte */
+                }
     </style>
+    <script>
+        function handleReunionChange(url) {
+            if (url) {
+                window.location.href = url;
+            }
+        }
+
+        function toggleDropdown() {
+            document.querySelector('.dropdown-menu').classList.toggle('show');
+        }
+
+        document.addEventListener('click', function (event) {
+            if (!event.target.closest('.dropdown')) {
+                document.querySelector('.dropdown-menu').classList.remove('show');
+            }
+        });
+    </script>
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -63,24 +135,46 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Accueil", "Index", "Home")</li>
-                    <li>@Html.ActionLink("À propos de", "About", "Home")</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
-                    <li>@Html.ActionLink("Reunions", "Index", "Reunions")</li>
-                    
+                    <li class="@(ViewContext.RouteData.Values["action"].ToString() == "Index" ? "active" : "")">
+                        @Html.ActionLink("Accueil", "Index", "Home")
+                    </li>
+                    <li class="@(ViewContext.RouteData.Values["action"].ToString() == "About" ? "active" : "")">
+                        @Html.ActionLink("À propos de", "About", "Home")
+                    </li>
+                    <li class="@(ViewContext.RouteData.Values["action"].ToString() == "Contact" ? "active" : "")">
+                        @Html.ActionLink("Contact", "Contact", "Home")
+                    </li>
+                    <li class="@(ViewContext.RouteData.Values["action"].ToString() == "Index" && ViewContext.RouteData.Values["controller"].ToString() == "Reunions" ? "active" : "")">
+                        @Html.ActionLink("Reunions", "Index", "Reunions")
+                    </li>
                 </ul>
                 <p class="nav navbar-text navbar-right">Bonjour, @User.Identity.Name!</p>
             </div>
         </div>
     </div>
 
-    <!--<div class="sidebar">
+    <div class="sidebar">
         <h4>Menu</h4>
-        <a href="@Url.Action("Index", "Reunions")">Réunions</a>
-        <a href="@Url.Action("Index", "Utilisateurs")">Utilisateurs</a>
-        <a href="@Url.Action("Index", "Salles")">Salles</a>-->
-        <!-- Ajoutez d'autres liens si nécessaire -->
-    <!--</div>-->
+        <div class="dropdown">
+            <a href="#" class="dropdown-toggle" onclick="toggleDropdown()">
+                <i class="fas fa-calendar-alt"></i> Réunions
+            </a>
+            <div class="dropdown-menu">
+                <a href="@Url.Action("Index", "Reunions")">
+                    <i class="fas fa-calendar-alt"></i> Cnsulter Reunions
+                </a>
+                <a href="@Url.Action("Calendrier", "Reunions")">
+                    <i class="fas fa-calendar-alt"></i>Planifier une nouvelle Reunions 
+                </a>
+            </div>
+        </div>
+        <a href="@Url.Action("Index", "Utilisateurs")" class="@(ViewContext.RouteData.Values["controller"].ToString() == "Utilisateurs" ? "active" : "")">
+            <i class="fas fa-users"></i> Utilisateurs
+        </a>
+        <a href="@Url.Action("Index", "Salles")" class="@(ViewContext.RouteData.Values["controller"].ToString() == "Salles" ? "active" : "")">
+            <i class="fas fa-building"></i> Salles
+        </a>
+    </div>
 
     <div class="content">
         <div class="container body-content">
