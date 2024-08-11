@@ -2,31 +2,55 @@
 
 @{
     ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_test.cshtml";
 }
 
 <h2>Delete</h2>
+<div class="row gutters">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Salles</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.capacite)
-        </dt>
+        <div class="card m-0">
+            <div class="card-body">
 
-        <dd>
-            @Html.DisplayFor(model => model.capacite)
-        </dd>
+                <h3>Êtes-vous sûr de vouloir supprimer ceci ?</h3>
+                <div>
+                    <dl class="dl-horizontal">
+                        <dt>
+                            @Html.DisplayNameFor(model => model.nom)
+                        </dt>
 
-    </dl>
+                        <dd>
+                            @Html.DisplayFor(model => model.nom)
+                        </dd>
 
-    @using (Html.BeginForm()) {
-        @Html.AntiForgeryToken()
+                    </dl>
+                    <dl class="dl-horizontal">
+                        <dt>
+                            @Html.DisplayNameFor(model => model.capacite)
+                        </dt>
 
-        <div class="form-actions no-color">
-            <input type="submit" value="Delete" class="btn btn-default" /> |
-            @Html.ActionLink("Back to List", "Index")
+                        <dd>
+                            @Html.DisplayFor(model => model.capacite)
+                        </dd>
+
+                    </dl>
+
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+
+                <div class="form-actions no-color">
+                    <input type="submit" value="Supprimer" class="btn btn-secondary" /> |
+
+                    @Html.ActionLink("Retour", "Index", new { }, new { @class = "btn-link" })
+                </div>
+                        
+                    }
+                </div>
+
+            </div>
         </div>
-    }
+
+    </div>
+
 </div>

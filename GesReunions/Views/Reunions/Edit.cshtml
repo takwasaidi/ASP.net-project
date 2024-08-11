@@ -2,92 +2,94 @@
 
 @{
     ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_test.cshtml";
 }
 
-<h2>Edit</h2>
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-
-    <div class="form-horizontal">
-        <h4>Reunions</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-        <!-- Titre -->
-        <div class="form-group">
-            @Html.LabelFor(model => model.Titre, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Titre, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Titre, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <!-- Description -->
-        <div class="form-group">
-            @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <!-- Date -->
-        <div class="form-group">
-            @Html.LabelFor(model => model.Date, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "form-control", @type = "datetime-local" } })
-                @Html.ValidationMessageFor(model => model.Date, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <!-- Heures -->
-        <div class="form-group">
-            @Html.LabelFor(model => model.Heures, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Heures, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Heures, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <!-- Lieu -->
-        <div class="form-group">
-            @Html.LabelFor(model => model.Lieu, "Lieu", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("Lieu", (SelectList)ViewBag.Lieu, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Lieu, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <!-- Utilisateurs -->
-        <div class="form-group">
-            <label for="utilisateursSelectionnes" class="control-label col-md-2">Sélectionnez les utilisateurs :</label>
-            <div class="col-md-10">
-                @foreach (var utilisateur in ViewBag.UtilisateursDisponibles as IEnumerable<GesReunions.Models.Utilisateurs>)
-                {
-                    <div class="checkbox">
-                        <label>
-                            <input type="checkbox" name="utilisateursSelectionnes" value="@utilisateur.Id"
-                                   @(ViewBag.SelectedUtilisateurs.Contains(utilisateur.Id) ? "checked" : "") />
-                            @utilisateur.Nom
-                        </label>
+    <div class="row justify-content-center gutters">
+        <div class="col-xl-10 col-lg-10 col-md-12 col-sm-12 col-12">
+            <form>
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="card m-0">
+                    <div class="card-header">
+                        <div class="card-title">Modification du reunion</div>
                     </div>
-                }
-            </div>
+                    <div class="card-body">
+
+                        <!-- Row start -->
+                        <div class="row gutters">
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                <div class="form-group">
+                                    <label for="inputName" class="col-form-label">Titre</label>
+                                    @Html.TextBoxFor(model => model.Titre, new { @class = "form-control", @placeholder = "Entrez le titre ici" })
+                                    @Html.ValidationMessageFor(model => model.Titre, "", new { @class = "text-danger" })
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="inputEmail" class="col-form-label">Description</label>
+                                    @Html.TextAreaFor(model => model.Description, new { @class = "form-control", @placeholder = "Entrez la description ici", @rows = 5 })
+                                    @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="inputMobNumber" class="col-form-label">Date</label>
+                                    @Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "form-control", @type = "datetime-local" } })
+                                    @Html.ValidationMessageFor(model => model.Date, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label for="inputSubject" class="col-form-label">Heures</label>
+                                    @Html.EditorFor(model => model.Heures, new { htmlAttributes = new { @class = "form-control", @placeholder = "Entrez le nombre des heures" } })
+                                    @Html.ValidationMessageFor(model => model.Heures, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputSubject" class="col-form-label">Salle</label>
+                                    @Html.DropDownList("Lieu", null, htmlAttributes: new { @class = "form-control", @placeholder = "choisir une salle" })
+                                    @Html.ValidationMessageFor(model => model.Lieu, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputMessage" class="col-form-label">Participants</label>
+                                    @foreach (var utilisateur in ViewBag.UtilisateursDisponibles as IEnumerable<GesReunions.Models.Utilisateurs>)
+                                    {
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" name="utilisateursSelectionnes" value="@utilisateur.Id"
+                                                       @(ViewBag.SelectedUtilisateurs.Contains(utilisateur.Id) ? "checked" : "") />
+                                                @utilisateur.Nom
+                                            </label>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Row end -->
+                        <!-- Row start -->
+                        <div class="row gutters">
+                            <div class="col-md-offset-2 col-md-10">
+                                <input type="submit" value="Enregistrer la modification" class="btn btn-primary float-right" />
+                            </div>
+                        </div>
+
+                        <!-- Row end -->
+
+                    </div>
+                </div>
+            </form>
         </div>
 
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
-            </div>
-        </div>
+    </div> <!-- Row end -->
+    <div>
+        <a href="@Url.Action("Index")" class="btn btn-secondary" style="text-decoration:none;">
+            <i class="fas fa-arrow-left"></i> Retour
+        </a>
     </div>
 }
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")

@@ -2,55 +2,57 @@
 
 @{
     ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_test.cshtml";
 }
 
 <h2>Delete</h2>
+<div class="row gutters">
+<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Reunions</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
+    <div class="card m-0">
+        <div class="card-body">
 
-        <dd>
-            @Html.DisplayFor(model => model.Description)
-        </dd>
+            <h3>Êtes-vous sûr de vouloir supprimer ceci ?</h3>
+            <div>
+                <dl class="dl-horizontal">
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Titre)
+                    </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Date)
-        </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Titre)
+                    </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.Date)
-        </dd>
+                </dl>
+                <dl class="dl-horizontal">
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Date)
+                    </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Heures)
-        </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Date)
+                    </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.Heures)
-        </dd>
+                </dl>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Salles.nom)
-        </dt>
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
 
-        <dd>
-            @Html.DisplayFor(model => model.Salles.nom)
-        </dd>
+                    <div class="form-actions no-color">
+                        <input type="submit" value="Supprimer" class="btn btn-secondary" /> |
 
-    </dl>
+                        @Html.ActionLink("Retour", "Index", new { }, new { @class = "btn-link" })
+                    </div>
 
-    @using (Html.BeginForm()) {
-        @Html.AntiForgeryToken()
+                }
+            </div>
 
-        <div class="form-actions no-color">
-            <input type="submit" value="Delete" class="btn btn-default" /> |
-            @Html.ActionLink("Back to List", "Index")
         </div>
-    }
+    </div>
+
+</div>
+
+</div>
+
 </div>

@@ -31,10 +31,12 @@
     ************ -->
     <!-- DateRange css -->
     <link rel="stylesheet" href="~/assets/vendor/daterange/daterange.css" />
-
+    <link rel="stylesheet" href="~/assets/vendor/datatables/dataTables.bs4.css" />
+    <link rel="stylesheet" href="~/assets/vendor/datatables/dataTables.bs4-custom.css" />
+    <link href="~/assets/vendor/datatables/buttons.bs.css" rel="stylesheet" />
     <!-- Calendar css -->
-  @*  <link rel="stylesheet" href="~/assets/vendor/calendar/css/core/main.css" />
-    <link rel="stylesheet" href="~/assets/vendor/calendar/css/daygrid/main.css" />*@
+    @*  <link rel="stylesheet" href="~/assets/vendor/calendar/css/core/main.css" />
+        <link rel="stylesheet" href="~/assets/vendor/calendar/css/daygrid/main.css" />*@
 
 </head>
 
@@ -761,21 +763,21 @@
             <!-- Page header end -->
             <!-- Main container start -->
             <div class="main-container">
-
+                @RenderBody()
                 <!-- row -->
-                <div class="row gutters">
-                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                @*<div class="row gutters">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 
-                        <div class="card m-0">
-                            <div class="card-body">
-                          
-                                @RenderBody()
+                            <div class="card m-0">
+                                <div class="card-body">
+
+
+                                </div>
                             </div>
+
                         </div>
 
-                    </div>
-                   
-                </div>
+                    </div>*@
                 <!-- row end -->
 
             </div>
@@ -809,12 +811,19 @@
     <!-- Daterange -->
     <script src="~/assets/vendor/daterange/daterange.js"></script>
     <script src="~/assets/vendor/daterange/custom-daterange.js"></script>
+    <!-- Data Tables -->
+    <script src="~/assets/vendor/datatables/dataTables.min.js"></script>
+    <script src="~/assets/vendor/datatables/dataTables.bootstrap.min.js"></script>
+
+    <!-- Custom Data tables -->
+    <script src="~/assets/vendor/datatables/custom/custom-datatables.js"></script>
+    <script src="~/assets/vendor/datatables/custom/fixedHeader.js"></script>
 
     <!-- Fullcalendar -->
     @*<script src="~/assets/vendor/calendar/js/core/main.min.js"></script>
-    <script src="~/assets/vendor/calendar/js/daygrid/main.min.js"></script>
-    <script src="~/assets/vendor/calendar/js/interaction/main.min.js"></script>
-    <script src="~/assets/vendor/calendar/js/custom.js"></script>*@
+        <script src="~/assets/vendor/calendar/js/daygrid/main.min.js"></script>
+        <script src="~/assets/vendor/calendar/js/interaction/main.min.js"></script>
+        <script src="~/assets/vendor/calendar/js/custom.js"></script>*@
 
 
     <!-- Main JS -->
