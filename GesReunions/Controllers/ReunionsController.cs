@@ -43,6 +43,57 @@ namespace GesReunions.Controllers
             return View(reunions);*/
         }
 
+        public JsonResult GetMeetingDistribution()
+        {
+            var roomStats = db.Reunions
+                .GroupBy(r => r.Salles.nom) // Regrouper par salle
+                .Select(g => new
+                {
+                    Room = g.Key,
+                    Count = g.Count()
+                })
+                .ToList();
+
+            return Json(roomStats, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult GetReunionStats()
+        {
+            var today = DateTime.Now.Date;
+
+            // Récupérer toutes les réunions
+            var reunions = db.Reunions.ToList();
+
+            // Créer des listes pour stocker les comptes
+            var months = new[] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
+            var upcomingReunions = new List<int>(new int[12]);
+            var expiredReunions = new List<int>(new int[12]);
+
+            foreach (var reunion in reunions)
+            {
+                // Déterminer le mois de la réunion
+                var monthIndex = reunion.Date.Month - 1;
+
+                if (reunion.Date < today)
+                {
+                    // Réunion expirée
+                    expiredReunions[monthIndex]++;
+                }
+                else
+                {
+                    // Réunion à venir
+                    upcomingReunions[monthIndex]++;
+                }
+            }
+
+            return Json(new
+            {
+                months = months,
+                upcoming = upcomingReunions,
+                expired = expiredReunions
+            }, JsonRequestBehavior.AllowGet);
+        }
+
         // GET: Reunions/Details/5
         public ActionResult Details(string id)
         {

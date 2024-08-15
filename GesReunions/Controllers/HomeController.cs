@@ -14,7 +14,14 @@ namespace GesReunions.Controllers
     {
         public ActionResult Index()
         {
-            return View();
+            var model = new DashboardViewModel
+            {
+                NombreDeReunions = db.Reunions.Count(),
+                NombreDUtilisateurs = db.Utilisateurs.Count(),
+                NombreDeSalles = db.Salles.Count()
+            };
+
+            return View(model);
         }
         private GestionReunionsEntities db = new GestionReunionsEntities();
         public JsonResult GetEvents()

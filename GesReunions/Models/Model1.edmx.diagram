@@ -9,7 +9,7 @@
         <EntityTypeShape EntityType="GestionReunionsModel.Reunions" Width="1.5" PointX="3" PointY="5.25" IsExpanded="true" />
         <EntityTypeShape EntityType="GestionReunionsModel.Role" Width="1.5" PointX="0.75" PointY="1.625" IsExpanded="true" />
         <EntityTypeShape EntityType="GestionReunionsModel.Salles" Width="1.5" PointX="0.75" PointY="5.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="GestionReunionsModel.sysdiagrams" Width="1.5" PointX="5.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="GestionReunionsModel.sysdiagrams" Width="1.5" PointX="5.375" PointY="4.75" IsExpanded="true" />
         <EntityTypeShape EntityType="GestionReunionsModel.Utilisateurs" Width="1.5" PointX="3" PointY="1" IsExpanded="true" />
         <AssociationConnector Association="GestionReunionsModel.FK_reunion_utilisateur_Reunions" ManuallyRouted="false" />
         <AssociationConnector Association="GestionReunionsModel.FK_reunion_utilisateur_Utilisateurs" ManuallyRouted="false" />

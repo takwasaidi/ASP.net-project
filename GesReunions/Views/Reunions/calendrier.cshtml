@@ -240,6 +240,7 @@
             margin-top: 10px;
             display: block;
         }
+      
 
     </style>
 
@@ -298,7 +299,7 @@
                 <form class="form-horizontal">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Modal Header</h4>
+                        <h4 class="modal-title"></h4>
                     </div>
 
                     <!-- Title Field -->
@@ -377,7 +378,8 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-success" id="btnSave">Save</button>
+                        <button type="button" class="btn btn-primary" id="btnSave" style="background-color: #ee0000; border-color: #ee0000;">Save</button>
+
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     </div>
                 </form>
@@ -489,8 +491,9 @@
                         },
                         events: reunions,
                         eventColor: '#0000FF',
-                        eventClick: function (calEvent) {
+                        eventClick: function (calEvent,jsEvent) {
                             selectedMeeting = calEvent;
+                            
                             $('#myModal #meetingTitle').text(calEvent.title);
                             var $description = $('<div/>');
                             $description.append($('<p/>').html('<b>Start:</b> ' + moment(calEvent.start).format("DD-MMM-YYYY HH:mm a")));
@@ -502,6 +505,7 @@
                             $description.append($('<p/>').html('<b>Participants:</b> ' + (calEvent.participants || []).join(', ')));
                             $('#myModal #pDetails').empty().html($description);
                             $('#myModal').modal();
+
                         },
                         selectable: true,
                         select: function (start, end) {
@@ -558,6 +562,7 @@
 
                 // Fonction pour ouvrir et éditer le formulaire
                 function openAndEditForm() {
+                    
                     if (selectedMeeting != null) {
                         $('#txtTitre').val(selectedMeeting.title);
                         $('#txtStart').val(selectedMeeting.start.format('DD/MM/YYYY HH:mm A'));
